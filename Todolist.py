@@ -1,74 +1,64 @@
-import tkinter as tk
+#importing packages 
+from  tkinter import * 
+import tkinter.messagebox
 
-class ToDoListApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("To-Do List")
+#creating the initial window
+window=Tk()
+#giving a title
+window.title("DataFlair Python To-Do List APP")
 
-        self.tasks = []
+frame_task=Frame(window)
+frame_task.pack()
 
-        self.task_entry = tk.Entry(root, width=30)
-        self.task_entry.pack(pady=10)
+listbox_task=Listbox(frame_task,bg="black",fg="white",height=15,width=50,font = "Helvetica")  
+listbox_task.pack(side=tkinter.LEFT)
 
-        self.add_button = tk.Button(root, text="Add Task", command=self.add_task)
-        self.add_button.pack()
+scrollbar_task=Scrollbar(frame_task)
+scrollbar_task.pack(side=tkinter.RIGHT,fill=tkinter.Y)
+listbox_task.config(yscrollcommand=scrollbar_task.set)
+scrollbar_task.config(command=listbox_task.yview)
 
-        self.task_listbox = tk.Listbox(root, width=30)
-        self.task_listbox.pack(pady=10)
+entry_button=Button(window,text="Add task",width=50,command=entertask)
+entry_button.pack(pady=3)
 
-        self.update_button = tk.Button(root, text="Update Task", command=self.update_task)
-        self.update_button.pack()
+delete_button=Button(window,text="Delete selected task",width=50,command=deletetask)
+delete_button.pack(pady=3)
 
-        self.mark_done_button = tk.Button(root, text="Mark as Done", command=self.mark_as_done)
-        self.mark_done_button.pack()
+mark_button=Button(window,text="Mark as completed ",width=50,command=markcompleted)
+mark_button.pack(pady=3)
 
-        self.delete_button = tk.Button(root, text="Delete Task", command=self.delete_task)
-        self.delete_button.pack()
 
-        self.display_button = tk.Button(root, text="Display Tasks", command=self.display_tasks)
-        self.display_button.pack()
+window.mainloop()
 
-    def add_task(self):
-        task = self.task_entry.get()
-        if task:
-            self.tasks.append({"task": task, "done": False})
-            self.task_listbox.insert(tk.END, task)
-            self.task_entry.delete(0, tk.END)
+#function to enter task to add to the list
+def entertask():
+    input_text=""
+    def add():
+        input_text=entry_task.get(1.0, "end-1c")
+        if input_text=="":
+            tkinter.messagebox.showwarning(title="Warning!",message="Please Enter some Text")
+        else:
+            listbox_task.insert(END,input_text)
+            root1.destroy()
+    root1=Tk()
+    root1.title("Add task")
+    entry_task=Text(root1,width=40,height=4)
+    entry_task.pack()
+    button_temp=Button(root1,text="Add task",command=add)
+    button_temp.pack()
+    root1.mainloop()
+    
 
-    def update_task(self):
-        selected_task_index = self.task_listbox.curselection()
-        if selected_task_index:
-            new_task = self.task_entry.get()
-            if new_task:
-                index = selected_task_index[0]
-                self.tasks[index] = {"task": new_task, "done": False}
-                self.task_listbox.delete(index)
-                self.task_listbox.insert(index, new_task)
-                self.task_entry.delete(0, tk.END)
-
-    def mark_as_done(self):
-        selected_task_index = self.task_listbox.curselection()
-        if selected_task_index:
-            index = selected_task_index[0]
-            self.tasks[index]["done"] = True
-            task = self.tasks[index]["task"]
-            self.task_listbox.delete(index)
-            self.task_listbox.insert(tk.END, f"{task} (Done)")
-
-    def delete_task(self):
-        selected_task_index = self.task_listbox.curselection()
-        if selected_task_index:
-            index = selected_task_index[0]
-            del self.tasks[index]
-            self.task_listbox.delete(index)
-
-    def display_tasks(self):
-        self.task_listbox.delete(0, tk.END)
-        for task in self.tasks:
-            status = "Done" if task["done"] else "Not Done"
-            self.task_listbox.insert(tk.END, f"{task['task']} ({status})")
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ToDoListApp(root)
-    root.mainloop()
+#function to facilitate the delete task from the Listbox
+def deletetask():
+    selected=listbox_task.curselection()
+    listbox_task.delete(selected[0])
+    
+#Executes this to mark completed 
+def markcompleted():
+    marked=listbox_task.curselection()
+    temp=marked[0]
+    temp_marked=listbox_task.get(marked)
+    temp_marked=temp_marked+" ✔"
+    listbox_task.delete(temp)
+    listbox_task.insert(temp,temp_marked)
